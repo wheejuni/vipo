@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ai-chat-postgres
+    environment:
+      POSTGRES_DB: ai_chat_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    networks:
+      - ai-chat-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_chat_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # AI Chat Platform Application
+  ai-chat-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-chat-app
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_URL: jdbc:postgresql://postgres:5432/ai_chat_dev
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: password
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-your-openai-api-key}
+      JWT_SECRET: dev-docker-secret-key-for-development-only
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001
+      LOG_LEVEL: DEBUG
+      FLYWAY_CLEAN_DISABLED: false
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - ai-chat-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: ai-chat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-chat-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    profiles:
+      - with-redis
+
+  # pgAdmin for database management (development only)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ai-chat-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - ai-chat-network
+    depends_on:
+      - postgres
+    profiles:
+      - with-pgadmin
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  ai-chat-network:
+    driver: bridge

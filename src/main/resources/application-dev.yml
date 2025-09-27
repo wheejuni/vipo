@@ -1,0 +1,85 @@
+spring:
+  # Database Configuration for Development (H2)
+  datasource:
+    url: jdbc:h2:mem:devdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  
+  # H2 Console Configuration
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  
+  # JPA Configuration for Development
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: create-drop
+  
+  # Flyway Configuration for Development
+  flyway:
+    enabled: false
+  
+  # AI Configuration for Development
+  ai:
+    openai:
+      chat:
+        options:
+          temperature: 0.8
+          max-tokens: 1500
+
+# Development Specific Configuration
+app:
+  jwt:
+    secret: dev-secret-key-for-development-only-do-not-use-in-production
+    expiration: 3600000  # 1 hour for development
+  
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:3001,http://localhost:8080,http://localhost:8081
+  
+  rate-limit:
+    enabled: false  # Disable rate limiting in development
+  
+  analytics:
+    batch-size: 10  # Smaller batch size for development
+
+# Server Configuration for Development
+server:
+  error:
+    include-stacktrace: always
+    include-exception: true
+
+# Management Configuration for Development
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# Logging Configuration for Development
+logging:
+  level:
+    com.hightemplar.vipo: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    org.flywaydb: DEBUG
+    org.springframework.ai: DEBUG
+  file:
+    name: logs/ai-chat-platform-dev.log

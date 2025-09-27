@@ -1,0 +1,89 @@
+spring:
+  # Database Configuration for Production
+  datasource:
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      idle-timeout: 600000
+      connection-timeout: 30000
+      leak-detection-threshold: 60000
+  
+  # JPA Configuration for Production
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: false
+        jdbc:
+          batch_size: 50
+  
+  # Flyway Configuration for Production
+  flyway:
+    clean-disabled: true
+    validate-on-migrate: true
+  
+  # AI Configuration for Production
+  ai:
+    openai:
+      chat:
+        options:
+          timeout: 60s
+
+# Production Specific Configuration
+app:
+  jwt:
+    expiration: 86400000  # 24 hours
+  
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}  # Must be explicitly set in production
+  
+  rate-limit:
+    enabled: true
+    requests-per-minute: 30  # More restrictive in production
+    burst-capacity: 50
+  
+  analytics:
+    batch-size: 500
+    retention-days: 365
+
+# Server Configuration for Production
+server:
+  compression:
+    enabled: true
+  http2:
+    enabled: true
+  error:
+    include-stacktrace: never
+    include-exception: false
+    include-message: never
+
+# Management Configuration for Production
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  security:
+    enabled: true
+
+# Logging Configuration for Production
+logging:
+  level:
+    com.hightemplar.vipo: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.springframework.web: WARN
+    org.flywaydb: INFO
+    org.springframework.ai: INFO
+    root: WARN
+  file:
+    name: /var/log/ai-chat-platform/application.log
+  logback:
+    rollingpolicy:
+      max-file-size: 50MB
+      max-history: 60
+      total-size-cap: 5GB

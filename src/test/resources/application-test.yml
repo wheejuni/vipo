@@ -1,0 +1,107 @@
+spring:
+  application:
+    name: ai-chat-platform-test
+  
+  # Test Database Configuration (H2 in-memory)
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+  
+  # JPA Configuration for Tests
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.SnakeCasePhysicalNamingStrategy
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: false
+  
+  # Disable Flyway for tests
+  flyway:
+    enabled: false
+  
+  # Test AI Configuration
+  ai:
+    openai:
+      api-key: test-api-key
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.7
+          max-tokens: 1000
+          timeout: 10s
+      embedding:
+        options:
+          model: text-embedding-ada-002
+
+# Test Application Configuration
+app:
+  jwt:
+    secret: testSecretKeyForJwtTokenGenerationInTestEnvironment
+    expiration: 3600000  # 1 hour for tests
+    issuer: ai-chat-platform-test
+  
+  thread:
+    timeout-minutes: 30
+  
+  cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+  
+  # Test RAG Configuration
+  rag:
+    max-file-size: 1MB
+    supported-formats: pdf,txt,md
+    chunk-size: 500
+    chunk-overlap: 100
+  
+  # API Documentation
+  version: 1.0.0-test
+
+# Test Server Configuration
+server:
+  port: 0  # Random port for tests
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
+
+# Test Management Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+# Test Logging Configuration
+logging:
+  level:
+    com.hightemplar.vipo: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.springframework.web: INFO
+    org.springframework.test: INFO
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+
+# SpringDoc Configuration for Tests
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
