@@ -27,47 +27,46 @@ class OpenApiConfig {
                 Info()
                     .title("VIPO AI Chat Platform API")
                     .description("""
-                        A comprehensive AI-powered chat platform with conversation management, 
-                        user authentication, analytics, feedback system, and RAG capabilities for internal documents.
+                        대화 관리, 사용자 인증, 분석, 피드백 시스템, 내부 문서용 RAG 기능을 갖춘 포괄적인 AI 기반 채팅 플랫폼입니다.
                         
-                        ## Features
-                        - **Conversations**: Create and manage AI conversations with streaming support
-                        - **Authentication**: JWT-based user authentication and authorization
-                        - **Analytics**: Comprehensive analytics and reporting
-                        - **Feedback**: User feedback collection and management
-                        - **RAG**: Retrieval-Augmented Generation for internal documents
-                        - **Real-time**: Server-Sent Events (SSE) for streaming responses
+                        ## 주요 기능
+                        - **대화**: 스트리밍 지원을 통한 AI 대화 생성 및 관리
+                        - **인증**: JWT 기반 사용자 인증 및 권한 관리
+                        - **분석**: 포괄적인 분석 및 리포팅
+                        - **피드백**: 사용자 피드백 수집 및 관리
+                        - **RAG**: 내부 문서용 검색 증강 생성
+                        - **실시간**: 스트리밍 응답을 위한 서버 전송 이벤트(SSE)
                         
-                        ## Authentication
-                        Most endpoints require authentication. Include the JWT token in the Authorization header:
+                        ## 인증
+                        대부분의 엔드포인트는 인증이 필요합니다. Authorization 헤더에 JWT 토큰을 포함하세요:
                         ```
                         Authorization: Bearer <your-jwt-token>
                         ```
                         
-                        ## Rate Limiting
-                        API requests are rate-limited to ensure fair usage and system stability.
+                        ## 요청 제한
+                        API 요청은 공정한 사용과 시스템 안정성을 위해 제한됩니다.
                     """.trimIndent())
                     .version(appVersion)
                     .contact(
                         Contact()
                             .name("VIPO Development Team")
-                            .email("dev@sionicai.com")
-                            .url("https://sionicai.com")
+                            .email("dev@hightemplar.com")
+                            .url("https://hightemplar.com")
                     )
                     .license(
                         License()
                             .name("Proprietary")
-                            .url("https://sionicai.com/license")
+                            .url("https://hightemplar.com/license")
                     )
             )
             .servers(
                 listOf(
                     Server()
                         .url("http://localhost:$serverPort")
-                        .description("Development server"),
+                        .description("개발 서버"),
                     Server()
-                        .url("https://api.vipo.sionicai.com")
-                        .description("Production server")
+                        .url("https://api.vipo.hightemplar.com")
+                        .description("운영 서버")
                 )
             )
             .addSecurityItem(
@@ -81,7 +80,7 @@ class OpenApiConfig {
                             .type(SecurityScheme.Type.HTTP)
                             .scheme("bearer")
                             .bearerFormat("JWT")
-                            .description("JWT token for authentication")
+                            .description("인증을 위한 JWT 토큰")
                     )
             )
     }

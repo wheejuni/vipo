@@ -2,6 +2,7 @@ package com.hightemplar.vipo.repository
 
 import com.hightemplar.vipo.entity.Conversation
 import com.hightemplar.vipo.entity.User
+import com.hightemplar.vipo.entity.Thread
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
